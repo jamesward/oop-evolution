@@ -4,3 +4,5 @@ kotlinLib("stdlib")
 
 libraryDependencies += "net.bytebuddy" % "byte-buddy" % "1.10.8"
 libraryDependencies += "net.bytebuddy" % "byte-buddy-agent" % "1.10.8"
+
+javacOptions ++= Seq("-source", "11", "-target", "11")

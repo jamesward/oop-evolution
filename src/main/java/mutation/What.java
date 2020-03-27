@@ -1,6 +1,6 @@
 package mutation;
 
-import static mutation.Something.*;
+import static mutation.Something.addOne;
 
 public class What {
 
