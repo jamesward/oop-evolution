@@ -30,16 +30,17 @@ object CaseClasses {
     val teslaFilter = UnsafeSelect.unsafeSelect[Vehicle](_.name == "Tesla")
     val numCylinders = GenLens[Vehicle](_.maybeNumCylinders)
     val optCylinderOfTesla = 
-      vehicles composeTraversal each composePrism teslaFilter composeLens numCylinders
+      vehicles ^|->> each ^<-? teslaFilter ^|-> numCylinders
+    val ownerInstallsV8OnTesla = optCylinderOfTesla set Some(8)
     val original = Owner(name = "Rich Guy",
       age = 43,
       vehicles = Vector(
         Vehicle("Cadillac"),
         Vehicle("Tesla")
       ))
-    println(s"Original owner: $original");
-    println(s"Can find tesla car with cylinder field: ${!optCylinderOfTesla.isEmpty(original)}")
-    println(s"Suped up tesla in owner: ${(optCylinderOfTesla set Some(8))(original)}")
+    val newOwner = ownerInstallsV8OnTesla(original)
+    println(s"Original owner: $original")
+    println(s"New owner: $newOwner")
   }
 
 
