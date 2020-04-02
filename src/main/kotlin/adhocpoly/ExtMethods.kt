@@ -1,0 +1,49 @@
+package adhocpoly
+
+fun main() {
+
+    fun Iterable<Char>.sum(): String {
+        val asciibase = 'a'.dec().toInt()
+
+        return this.fold(asciibase) { acc, l ->
+            (l.toInt() - asciibase) + acc
+        }.toChar().toString()
+    }
+
+    println(listOf('a', 'b', 'c').sum())
+
+
+    fun Iterable<String>.sum(): String {
+        val asciibase = 'a'.dec().toInt()
+
+        return this.fold(asciibase) { acc, l ->
+            (l.first().toInt() - asciibase) + acc
+        }.toChar().toString()
+    }
+
+    println(listOf("a", "b").sum())
+
+    abstract class ToChar<T> {
+        abstract operator fun invoke(t: T): Char
+    }
+
+    val stringToChar = object: ToChar<String>() {
+        override operator fun invoke(t: String): Char = t.first()
+    }
+
+    val charToChar = object: ToChar<Char>() {
+        override operator fun invoke(t: Char): Char = t
+    }
+
+    fun <T> Iterable<T>.sumT(toChar: ToChar<T>): String {
+        val asciibase = 'a'.dec().toInt()
+
+        return this.fold(asciibase) { acc, l ->
+            (toChar(l).toInt() - asciibase) + acc
+        }.toChar().toString()
+    }
+
+    println(listOf('a', 'b', 'c').sumT(charToChar))
+    println(listOf("a", "b").sumT(stringToChar))
+
+}

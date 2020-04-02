@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 public class Combinators {
 
     public static void main(String[] args) {
-
         VehicleBuilders.Vehicle vehicle1 = new VehicleBuilders.Vehicle("Volvo", Optional.of(4));
         VehicleBuilders.Vehicle vehicle2 = new VehicleBuilders.Vehicle("Ford", Optional.of(8));
         VehicleBuilders.Vehicle vehicle3 = new VehicleBuilders.Vehicle("GM", Optional.of(12));
