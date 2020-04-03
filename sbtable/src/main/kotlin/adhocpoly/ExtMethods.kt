@@ -5,7 +5,7 @@ fun main() {
     fun Iterable<Char>.sum(): String {
         val asciibase = 'a'.dec().toInt()
 
-        return this.fold(asciibase) { acc, l ->
+        return fold(asciibase) { acc, l ->
             (l.toInt() - asciibase) + acc
         }.toChar().toString()
     }
@@ -16,7 +16,7 @@ fun main() {
     fun Iterable<String>.sum(): String {
         val asciibase = 'a'.dec().toInt()
 
-        return this.fold(asciibase) { acc, l ->
+        return fold(asciibase) { acc, l ->
             (l.first().toInt() - asciibase) + acc
         }.toChar().toString()
     }
@@ -38,7 +38,7 @@ fun main() {
     fun <T> Iterable<T>.sumT(toChar: ToChar<T>): String {
         val asciibase = 'a'.dec().toInt()
 
-        return this.fold(asciibase) { acc, l ->
+        return fold(asciibase) { acc, l ->
             (toChar(l).toInt() - asciibase) + acc
         }.toChar().toString()
     }
