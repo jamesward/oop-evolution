@@ -46,4 +46,13 @@ fun main() {
     println(listOf('a', 'b', 'c').sumT(charToChar))
     println(listOf("a", "b").sumT(stringToChar))
 
+    fun <T> iterableToChar(toChar: ToChar<T>): ToChar<Iterable<T>> {
+        return object: ToChar<Iterable<T>>() {
+            override fun invoke(t: Iterable<T>): Char = toChar(t.first())
+        }
+    }
+
+    println(listOf(listOf('a'), listOf('b', 'c')).sumT(iterableToChar(charToChar)))
+    println(listOf(listOf("a"), listOf("b", "c")).sumT(iterableToChar(stringToChar)))
+
 }
