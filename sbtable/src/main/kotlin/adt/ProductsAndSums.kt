@@ -18,6 +18,8 @@ fun main() {
 
     // 2 * 2 * 2
 
+    // AND = intersection
+
     val aORb: Either<A, B> = Either.Left(a)
 
     // 2 + 2
@@ -26,36 +28,7 @@ fun main() {
 
     // 2 + 2 + 2
 
-
-    // Algebraic Laws
-
-    // Associativity
-    // A AND (B AND C) == (A AND B) AND C
-    // A OR (B OR C) == (A OR B) OR C
-
-    // Commutativity
-    // A AND B == B AND A
-    // A OR B == B OR A
-
-    // Identity
-    // A AND Any == A
-    // A OR Nothing == A
-
-    // Distributivity
-    // A AND (B OR C) == (A AND B) OR (A AND C)
-    // ??? A OR (B AND C) == (A OR B) AND (A OR C)
-
-    // Annihilator
-    // A AND Nothing == Nothing
-    // ??? A OR Any == Any
-
-    // Idempotence
-    // ??? A AND A == A
-    // ??? A OR A == A
-
-    // Absorption
-    // ??? A AND (A OR B) == A
-    // ??? A OR (A AND B) == A
+    // OR = union
 }
 
 sealed class Either<L, R> {

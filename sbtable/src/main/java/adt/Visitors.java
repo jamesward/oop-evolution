@@ -1,36 +1,142 @@
 package adt;
 
+import java.util.*;
+
 public class Visitors {
 
     public static void main(String[] args) {
-        CodeStyles style = new CodeStyles();
-        style.visit(new Tab());
-        style.visit(new Space());
-        style.visit(new Space());
+        Style toFormat = new Space();
+        System.out.println("this is" + toFormat.accept(new StyleCode()) + "right");
 
-        System.out.println(style.correct + "right");
+
+        Style codeBlock = new CodeBlock(Collections.emptyList())
+                .add(new Tab())
+                .add(new Identifier("a"))
+                .add(new Space())
+                .add(new Tab())
+                .add(new Identifier("b"));
+        System.out.println(codeBlock.accept(new StyleCode()));
+
+
+        System.out.println(codeBlock.accept(new StyleHorrible()));
+    }
+
+    interface StyleVisitor<A> {
+        A visitTab(Tab tab);
+        A visitSpace(Space space);
+        A visitIdentifier(Identifier identifier);
+        A visitCodeBlock(CodeBlock codeBlock);
     }
 
     interface Style {
-        void visit(Tab tab);
-        void visit(Space space);
+        <A> A accept(StyleVisitor<A> styleVisitor);
+        default Style add(Style other) {
+            return new CodeBlock(Arrays.asList(this, other));
+        }
     }
 
-    static class Tab { }
-
-    static class Space { }
-
-    static class CodeStyles implements Style {
-        public String correct = "";
-
+    static class Tab implements Style {
         @Override
-        public void visit(Tab tab) {
-            correct += "  ";
+        public <A> A accept(StyleVisitor<A> styleVisitor) {
+            return styleVisitor.visitTab(this);
+        }
+    }
+
+    static class Space implements Style {
+        @Override
+        public <A> A accept(StyleVisitor<A> styleVisitor) {
+            return styleVisitor.visitSpace(this);
+        }
+    }
+
+    static class Identifier implements Style {
+
+        public final String name;
+
+        public Identifier(String name) {
+            this.name = name;
         }
 
         @Override
-        public void visit(Space space) {
-            correct += " ";
+        public <A> A accept(StyleVisitor<A> styleVisitor) {
+            return styleVisitor.visitIdentifier(this);
         }
     }
+
+    static class CodeBlock implements Style {
+        public final List<Style> styles;
+
+        CodeBlock(List<Style> styles) {
+            this.styles = styles;
+        }
+
+        @Override
+        public <A> A accept(StyleVisitor<A> styleVisitor) {
+            return styleVisitor.visitCodeBlock(this);
+        }
+
+        @Override
+        public Style add(Style other) {
+            List<Style> newStyles = new ArrayList<>(styles);
+            newStyles.add(other);
+            return new CodeBlock(newStyles);
+        }
+    }
+
+    static class StyleCode implements StyleVisitor<String> {
+        @Override
+        public String visitTab(Tab tab) {
+            return "  ";
+        }
+
+        @Override
+        public String visitSpace(Space space) {
+            return " ";
+        }
+
+        @Override
+        public String visitIdentifier(Identifier identifier) {
+            return identifier.name;
+        }
+
+        @Override
+        public String visitCodeBlock(CodeBlock codeBlock) {
+            return codeBlock.styles
+                    .stream()
+                    .map(style -> style.accept(this))
+                    .reduce("", (a, b) -> a + b);
+        }
+    }
+
+    static class StyleHorrible implements StyleVisitor<String> {
+        List<String> emojis = Arrays.asList(
+                "\uD83D\uDE02",
+                "\u267E\uFE0F",
+                "\uD83E\uDDFB"
+        );
+
+        @Override
+        public String visitTab(Tab tab) {
+            return emojis.get(new Random().nextInt(emojis.size()));
+        }
+
+        @Override
+        public String visitSpace(Space space) {
+            return " ";
+        }
+
+        @Override
+        public String visitIdentifier(Identifier identifier) {
+            return identifier.name;
+        }
+
+        @Override
+        public String visitCodeBlock(CodeBlock codeBlock) {
+            return codeBlock.styles
+                    .stream()
+                    .map(style -> style.accept(this))
+                    .reduce("", (a, b) -> a + b);
+        }
+    }
+
 }

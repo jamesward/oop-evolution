@@ -1,9 +1,9 @@
-package builders
+package serialization
 
-import builders.CaseClasses.Vehicle
-import play.api.libs.json._
+import builders.CaseClasses._
 import play.api.libs.functional.syntax._
-import play.api.libs.json.Reads._
+import play.api.libs.json.Reads.{minLength, verifying}
+import play.api.libs.json.{JsError, Json, Reads, __}
 
 object JsonCombinators {
 
