@@ -1,39 +1,57 @@
 package adhocpoly
 
-abstract class Summable<T> {
-    abstract fun tplus(t1: T, t2: T): T
+abstract class Jsonable<T> {
+    abstract fun json(t: T): String
 }
 
-context(Summable<T>)
-fun <T> Iterable<T>.sum(): T =
-    reduce(::tplus)
+context(Jsonable<T>)
+fun <T> T.toJson(): String =
+    json(this)
+
 
 fun main() {
 
-    val summableChar = object: Summable<Char>() {
-        override fun tplus(t1: Char, t2: Char): Char =
-            (t1.code + t2.code - 'a'.dec().code).toChar()
+    data class Bar(val name: String)
+
+    val barJson = object: Jsonable<Bar>() {
+        override fun json(t: Bar): String = """
+            {
+                "name": ${t.name}
+            }
+        """.trimIndent()
     }
 
-    val summableString = object: Summable<String>() {
-        // you can't do:
-        // context(Summable<Char>)
-        override fun tplus(t1: String, t2: String): String = run {
-            val t2Chars = t2.toCharArray()
-            t1.toCharArray().mapIndexed { i, c ->
-                summableChar.tplus(c, t2Chars[i])
-            }.joinToString("")
+    with(barJson) {
+        println(Bar("asdf").toJson())
+    }
+
+    // now add another level: Jsonable<Foo> needs a Jsonable<Bar>
+
+    data class Foo(val bar: Bar)
+
+    val fooJson = object: Jsonable<Foo>() {
+        context(Jsonable<Bar>)
+        override fun json(t: Foo): String = """
+            {
+                "bar": ${t.bar.toJson()}
+            }
+        """.trimIndent()
+    }
+
+    with(barJson) {
+        with(fooJson) {
+            println(Foo(Bar("asdf")).toJson())
         }
     }
 
-    with(summableChar) {
-        with(summableString) {
-            println(listOf('a', 'b').sum())
-            println(listOf("ah", "he").sum())
+    /*
+    Compile error:
 
-            // doesn't work because we don't have a Summable<Boolean>
-            //println(listOf(true, false).sum())
-        }
-    }
+    Caused by: java.lang.IllegalArgumentException: No argument for parameter VALUE_PARAMETER name:t index:1 type:adhocpoly.ContextReceiversKt.main.Foo:
+CALL 'public open fun json (<this>: adhocpoly.Jsonable<adhocpoly.ContextReceiversKt.main.Bar>, t: adhocpoly.ContextReceiversKt.main.Foo): kotlin.String declared in adhocpoly.ContextReceiversKt.main.<no name provided>' type=kotlin.String origin=BRIDGE_DELEGATION
+  $this: GET_VAR '<this>: adhocpoly.ContextReceiversKt.main.<no name provided> declared in adhocpoly.ContextReceiversKt.main.<no name provided>.json' type=adhocpoly.ContextReceiversKt.main.<no name provided> origin=null
+  <this>: TYPE_OP type=adhocpoly.Jsonable<*> origin=IMPLICIT_CAST typeOperand=adhocpoly.Jsonable<*>
+    GET_VAR 't: kotlin.Any? declared in adhocpoly.ContextReceiversKt.main.<no name provided>.json' type=kotlin.Any? origin=null
+     */
 
 }
