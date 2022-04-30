@@ -30,6 +30,7 @@ object CaseClasses {
     import monocle.macros.GenLens
     import monocle.function.all._
     import monocle.unsafe.UnsafeSelect
+
     val vehicles = GenLens[Owner](_.vehicles)
     val teslaFilter = UnsafeSelect.unsafeSelect[Vehicle](_.name == "Tesla")
     val numCylinders = GenLens[Vehicle](_.maybeNumCylinders)
